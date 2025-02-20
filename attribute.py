@@ -8,7 +8,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from apex import amp
-from apex.parallel import DistributedDataParallel
+# from apex.parallel import DistributedDataParallel
+from torch.nn.parallel import DistributedDataParallel
 from torch import distributed
 from torch.utils import data
 from torch.utils.data.distributed import DistributedSampler
@@ -67,7 +68,7 @@ def get_dataset(opts):
     elif opts.dataset == 'ade':
         dataset = AdeSegmentationIncremental
     elif opts.dataset == 'cityscapes':
-        dataset = CityscapesSegmentationIncrementa
+        dataset = CityscapesSegmentationIncremental
     else:
         raise NotImplementedError
 

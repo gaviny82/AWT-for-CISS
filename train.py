@@ -5,7 +5,7 @@ from functools import reduce
 
 import torch
 import torch.nn as nn
-from apex import amp
+# from apex import amp
 from torch import distributed
 from torch.nn import functional as F
 
@@ -448,8 +448,13 @@ class Trainer:
             # xxx first backprop of previous loss (compute the gradients for regularization methods)
             loss_tot = loss + lkd + lde + l_icarl + pod_loss + loss_entmin
 
-            with amp.scale_loss(loss_tot, optim) as scaled_loss:
-                scaled_loss.backward()
+            scaler = torch.cuda.amp.GradScaler()
+            scaler.scale(loss_tot).backward()
+            scaler.step(optim)
+            scaler.update()
+            optim.zero_grad()
+            # with amp.scale_loss(loss_tot, optim) as scaled_loss:
+            #     scaled_loss.backward()
 
             # xxx Regularizer (EWC, RW, PI)
             if self.regularizer_flag:
@@ -457,8 +462,13 @@ class Trainer:
                     self.regularizer.update()
                 l_reg = self.reg_importance * self.regularizer.penalty()
                 if l_reg != 0.:
-                    with amp.scale_loss(l_reg, optim) as scaled_loss:
-                        scaled_loss.backward()
+                    scaler = torch.cuda.amp.GradScaler()
+                    scaler.scale(l_reg).backward()
+                    scaler.step(optim)
+                    scaler.update()
+                    optim.zero_grad()
+                    # with amp.scale_loss(l_reg, optim) as scaled_loss:
+                    #     scaled_loss.backward()
 
             optim.step()
             if scheduler is not None:
@@ -1044,11 +1054,11 @@ def _local_pod_masked(
                 if normalize_per_scale is True:
                     horizontal_pool = horizontal_pool / nb_regions
                     vertical_pool = vertical_pool / nb_regions
-                elif normalize_per_scale == "spm":
-                    if scale_index == 0:
-                        factor = 2 ** (len(spp_scales) - 1)
-                    else:
-                        factor = 2 ** (len(spp_scales) - scale_index)
+                # elif normalize_per_scale == "spm":
+                #     if scale_index == 0:
+                #         factor = 2 ** (len(spp_scales) - 1)
+                #     else:
+                #         factor = 2 ** (len(spp_scales) - scale_index)
                 if normalize:
                     horizontal_pool = F.normalize(horizontal_pool, dim=1, p=2)
                     vertical_pool = F.normalize(vertical_pool, dim=1, p=2)

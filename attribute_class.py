@@ -8,7 +8,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from apex import amp
-from apex.parallel import DistributedDataParallel
+# from apex.parallel import DistributedDataParallel
+from torch.nn.parallel import DistributedDataParallel
 from torch import distributed
 from torch.utils import data
 from torch.utils.data.distributed import DistributedSampler
@@ -66,12 +67,12 @@ def get_dataset(opts):
         dataset = VOCSegmentationIncremental
     elif opts.dataset == 'ade':
         dataset = AdeSegmentationIncremental
-    elif opts.dataset == 'cityscapes_domain':
-        dataset = CityscapesSegmentationIncrementalDomain
+    # elif opts.dataset == 'cityscapes_domain':
+    #     dataset = CityscapesSegmentationIncrementalDomain
     elif opts.dataset == 'cityscapes':
         dataset = CityscapesSegmentationIncremental
-    elif opts.dataset == 'bdd':
-        dataset = BDDSegmentationIncremental
+    # elif opts.dataset == 'bdd':
+    #     dataset = BDDSegmentationIncremental
     else:
         raise NotImplementedError
 
@@ -306,9 +307,9 @@ def main(opts):
     os.makedirs(path, exist_ok=True)
     imp_name = f"channels/{att_method}/imp_{opts.method}_{opts.dataset}_{opts.task}_{opts.step}.pt"
     torch.save(imp,imp_name)
-    if low_c is not None:
-        low_name = f"channels/{att_method}/low_{opts.method}_{opts.dataset}_{opts.task}_{opts.step}.pt"
-        torch.save(low_c,low_name)
+    # if low_c is not None:
+    #     low_name = f"channels/{att_method}/low_{opts.method}_{opts.dataset}_{opts.task}_{opts.step}.pt"
+    #     torch.save(low_c,low_name)
 
 
 if __name__ == '__main__':

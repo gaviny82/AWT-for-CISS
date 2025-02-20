@@ -1,0 +1,47 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+	"name": "Python3.8-Pytorch2.1",
+
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	// "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"runArgs": ["--gpus", "all"], // Enable GPU passthrough for the container
+
+	"mounts": [
+		"source=/mnt/scratchdata/jincheng-you,target=/workspace/tmp,type=bind",
+		"source=/mnt/scratchdata/jincheng-you/cityscapes,target=/workspace/datasets/cityscapes,type=bind",
+		"source=/mnt/scratchdata/benjamin/datasets/pascal/VOC2012,target=/workspace/datasets/PascalVOC2012,type=bind",
+		"source=/mnt/scratchdata/jincheng-you/ADEChallengeData2016,target=/workspace/datasets/ADE20K,type=bind"
+	],
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace/AWT-for-CISS,type=bind,consistency=cached",
+	"workspaceFolder": "/workspace/AWT-for-CISS",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+	
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [8888], // Port for Jupyter notebook
+
+	// Use 'postCreateCommand' to run commands aft=er the container is created.
+	"postCreateCommand": "pip install inplace-abn",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-toolsai.jupyter",
+				"njpwerner.autodocstring"
+			],
+			"settings": {
+				"terminal.integrated.shell.linux": "/bin/bash"
+			}
+		}
+	}
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}

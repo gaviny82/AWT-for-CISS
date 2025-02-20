@@ -65,8 +65,8 @@ def make_model(opts, classes=None):
             only_base_weights=opts.base_weights,
             opts=opts
         )
-    else:
-        model = SegmentationModule(body, head, head_channels, opts.num_classes, opts.fusion_mode)
+    # else:
+    #     model = SegmentationModule(body, head, head_channels, opts.num_classes, opts.fusion_mode)
 
     return model
 

@@ -182,14 +182,14 @@ class CityscapesSegmentationIncremental(data.Dataset):
                 if idxs_path is not None and distributed.get_rank() == 0:
                     np.save(idxs_path, np.array(idxs, dtype=int))
 
-            if test_on_val:
-                rnd = np.random.RandomState(1)
-                rnd.shuffle(idxs)
-                train_len = int(0.8 * len(idxs))
-                if train:
-                    idxs = idxs[:train_len]
-                else:
-                    idxs = idxs[train_len:]
+            # if test_on_val:
+            #     rnd = np.random.RandomState(1)
+            #     rnd.shuffle(idxs)
+            #     train_len = int(0.8 * len(idxs))
+            #     if train:
+            #         idxs = idxs[:train_len]
+            #     else:
+            #         idxs = idxs[train_len:]
 
             masking_value = 0  # Future classes will be considered as background.
             self.inverted_order = {label: self.order.index(label) for label in self.order}

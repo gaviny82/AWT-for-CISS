@@ -7,8 +7,9 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from apex import amp
-from apex.parallel import DistributedDataParallel
+# from apex import amp
+# from apex.parallel import DistributedDataParallel
+from torch.nn.parallel import DistributedDataParallel
 from torch import distributed
 from torch.utils import data
 from torch.utils.data.distributed import DistributedSampler
@@ -376,12 +377,14 @@ def run_step(opts, world_size, rank, device):
     logger.debug("Optimizer:\n%s" % optimizer)
 
     if model_old is not None:
-        [model, model_old], optimizer = amp.initialize(
-            [model.to(device), model_old.to(device)], optimizer, opt_level=opts.opt_level
-        )
+        # [model, model_old], optimizer = amp.initialize(
+        #     [model.to(device), model_old.to(device)], optimizer, opt_level=opts.opt_level
+        # )
+        model, model_old = model.to(device), model_old.to(device)
         model_old = DistributedDataParallel(model_old)
     else:
-        model, optimizer = amp.initialize(model.to(device), optimizer, opt_level=opts.opt_level)
+        # model, optimizer = amp.initialize(model.to(device), optimizer, opt_level=opts.opt_level)
+        model = model.to(device)
 
     # Put the model on GPU
     model = DistributedDataParallel(model, delay_allreduce=True)
