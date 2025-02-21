@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from apex import amp
+# from apex import amp
 # from apex.parallel import DistributedDataParallel
 from torch.nn.parallel import DistributedDataParallel
 from torch import distributed
@@ -176,9 +176,10 @@ def main(opts):
         model_old = make_model(
             opts, classes=tasks.get_per_task_classes(opts.dataset, opts.task, opts.step - 1)
         )
-        [model_old] = amp.initialize(
-            [model_old.to(device)], opt_level=opts.opt_level, cast_model_type=torch.float32
-        )
+        # [model_old] = amp.initialize(
+        #     [model_old.to(device)], opt_level=opts.opt_level, cast_model_type=torch.float32
+        # )
+        model_old = model_old.to(device)
         model_old = DistributedDataParallel(model_old.to(device))
 
         if opts.step_ckpt is not None:
