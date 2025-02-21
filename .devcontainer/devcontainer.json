@@ -8,7 +8,7 @@
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
-	"runArgs": ["--gpus", "all"], // Enable GPU passthrough for the container
+	"runArgs": ["--gpus", "all", "--ipc=host"], // Enable GPU passthrough for the container
 
 	"mounts": [
 		"source=/mnt/scratchdata/jincheng-you,target=/workspace/tmp,type=bind",

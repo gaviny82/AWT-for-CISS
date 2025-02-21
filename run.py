@@ -387,7 +387,7 @@ def run_step(opts, world_size, rank, device):
         model = model.to(device)
 
     # Put the model on GPU
-    model = DistributedDataParallel(model, delay_allreduce=True)
+    model = DistributedDataParallel(model)
 
     # xxx Load old model from old weights if step > 0!
     if opts.step > 0 and not opts.test:
