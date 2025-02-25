@@ -26,7 +26,7 @@
 	"forwardPorts": [8888], // Port for Jupyter notebook
 
 	// Use 'postCreateCommand' to run commands aft=er the container is created.
-	"postCreateCommand": "pip install inplace-abn",
+	"postCreateCommand": "pip install inplace-abn==1.1.0",
 
 	// Configure tool-specific properties.
 	"customizations": {
