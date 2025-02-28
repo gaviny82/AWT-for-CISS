@@ -230,6 +230,9 @@ def main(opts):
         else:
             n_step = 50
 
+        # Adapt to the crop_size argument
+        mask_size = opts.crop_size // 16
+        
         for cur_step, (images, labels) in enumerate(exp_loader):
             images = images.to(device, dtype=torch.float32)
             labels = labels.to(device, dtype=torch.long)
@@ -242,9 +245,9 @@ def main(opts):
                 for it in range(1,len(masks)):
                     mask = mask | masks[it]
 
-                mask = F.interpolate(mask.unsqueeze(0).float(), size=([32, 32]), mode="nearest")
+                mask = F.interpolate(mask.unsqueeze(0).float(), size=([mask_size, mask_size]), mode="nearest")
 
-                mask = mask.expand([1, 256, 32, 32])
+                mask = mask.expand([1, 256, mask_size, mask_size])
 
                 if mask[0][0].sum() < 1:
                     miss += 1
@@ -275,13 +278,13 @@ def main(opts):
 
         if opts.mean_after_max:
             print('Mean after max')
-            att = nn.MaxPool2d(32)(att)
+            att = nn.MaxPool2d(mask_size)(att)
             print('after max pool ',att.shape)
             att = torch.mean(att, dim=0)
             print('avg att ',att.shape)
         elif opts.mean_after_avg:
             print('Mean after avg')
-            att = nn.AvgPool2d(32)(att)
+            att = nn.AvgPool2d(mask_size)(att)
             print('after avg pool ',att.shape)
             att = torch.mean(att, dim=0)
             print('avg att ',att.shape)
@@ -289,13 +292,13 @@ def main(opts):
             print('Avg after mean')
             att = torch.mean(att, dim=0)
             print('avg att ',att.shape)
-            att = nn.AvgPool2d(32)(att)
+            att = nn.AvgPool2d(mask_size)(att)
             print('after avg pool ',att.shape)
         else:
             print('Max after mean')
             att = torch.mean(att, dim=0)
             print('avg att ',att.shape)
-            att = nn.MaxPool2d(32)(att)
+            att = nn.MaxPool2d(mask_size)(att)
             print('after max pool ',att.shape)
 
         top = int(opts.att)
